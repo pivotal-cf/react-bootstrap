@@ -19,6 +19,7 @@ import * as modDropdownButton from '../../src/DropdownButton';
 
 import * as modFade from '../../src/Fade';
 
+import * as modDropdownButtonRevisited from '../../src/revisited/DropdownButton';
 import * as modFormControls from '../../src/FormControls';
 import * as modGlyphicon from '../../src/Glyphicon';
 import * as modGrid from '../../src/Grid';
@@ -84,7 +85,8 @@ const Carousel = modCarousel.default;
 const CarouselItem = modCarouselItem.default;
 const Col = modCol.default;
 const DropdownButton = modDropdownButton.default;
-const FormControls = modFormControls;
+const DropdownButtonRevisited = modDropdownButtonRevisited.default;
+const FormControls = modFormControls.default;
 const Glyphicon = modGlyphicon.default;
 const Grid = modGrid.default;
 const Input = modInput.default;
