@@ -32,6 +32,7 @@ import * as modNav from '../../src/Nav';
 import * as modNavbar from '../../src/Navbar';
 import * as modNavItem from '../../src/NavItem';
 import * as modMenuItem from '../../src/MenuItem';
+import * as modMenuItemRevisited from '../../src/revisited/MenuItem';
 import * as modModal from '../../src/Modal';
 import * as modOverlayTrigger from '../../src/OverlayTrigger';
 import * as modPageHeader from '../../src/PageHeader';
@@ -98,6 +99,7 @@ const Nav = modNav.default;
 const Navbar = modNavbar.default;
 const NavItem = modNavItem.default;
 const MenuItem = modMenuItem.default;
+const MenuItemRevisited = modMenuItemRevisited.default;
 const Modal = modModal.default;
 
 const OverlayTrigger = modOverlayTrigger.default;
