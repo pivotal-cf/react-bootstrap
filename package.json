@@ -109,7 +109,6 @@
   "dependencies": {
     "babel-runtime": "^5.1.10",
     "classnames": "^2.0.0",
-    "keycode": "^2.0.0",
-    "uuid": "^2.0.1"
+    "keycode": "^2.0.0"
   }
 }
