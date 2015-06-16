@@ -20,7 +20,6 @@ import * as modDropdownButton from '../../src/DropdownButton';
 import * as modFade from '../../src/Fade';
 
 import * as modDropdownButtonRevisited from '../../src/revisited/DropdownButton';
-import * as modFormControls from '../../src/FormControls';
 import * as modGlyphicon from '../../src/Glyphicon';
 import * as modGrid from '../../src/Grid';
 import * as modInput from '../../src/Input';
@@ -57,6 +56,8 @@ import * as modWell from '../../src/Well';
 
 import * as modPortal from '../../src/Portal';
 import * as modOverlay from '../../src/Overlay';
+import * as modFormControls from '../../src/FormControls';
+import * as modStatic from '../../src/FormControls/Static';
 
 import babel from 'babel-core/browser';
 
@@ -88,7 +89,6 @@ const CarouselItem = modCarouselItem.default;
 const Col = modCol.default;
 const DropdownButton = modDropdownButton.default;
 const DropdownButtonRevisited = modDropdownButtonRevisited.default;
-const FormControls = modFormControls.default;
 const Glyphicon = modGlyphicon.default;
 const Grid = modGrid.default;
 const Input = modInput.default;
@@ -126,6 +126,9 @@ const Tooltip = modTooltip.default;
 const Well = modWell.default;
 const Overlay = modOverlay.default;
 
+
+const FormControls = modFormControls;
+const Static = modStatic.default;
 /* eslint-enable */
 
 const IS_MOBILE = typeof navigator !== 'undefined' && (
