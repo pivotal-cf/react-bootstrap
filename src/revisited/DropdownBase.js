@@ -9,8 +9,10 @@ import createChainedFunction from '../utils/createChainedFunction';
 const TOGGLE_REF = 'toggle-btn';
 
 export default class DropdownBase extends React.Component {
-  constructor(props) {
+  constructor(props, Toggle=DropdownToggle) {
     super(props);
+
+    this.Toggle = Toggle;
 
     this.toggleOpen = this.toggleOpen.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -89,7 +91,7 @@ export default class DropdownBase extends React.Component {
     let open = this.props.open !== undefined ? this.props.open : this.state.open;
 
     React.Children.forEach(this.props.children, child => {
-      if (child.type === DropdownToggle) {
+      if (child.type === this.Toggle) {
         toggle = toggle || child;
       } else if (child.type === DropdownMenu || child.type !== MenuItem) {
         menu = menu || child;
@@ -156,10 +158,10 @@ export default class DropdownBase extends React.Component {
 
     if (toggle === undefined) {
       toggle = (
-        <DropdownToggle
+        <this.Toggle
           {...toggleProps}
           onClick={createChainedFunction(
-            this.props.onClick,
+            this.props[this.Toggle.onClickProp],
             this.handleClick
           )}
           onKeyDown={createChainedFunction(
@@ -167,12 +169,12 @@ export default class DropdownBase extends React.Component {
             this.handleKeyDown
           )}
           noCaret={this.props.noCaret}
-          title={this.props.title} />
+          title={this.props[this.Toggle.titleProp]} />
       );
     } else {
       toggleProps.onClick = createChainedFunction(
         toggle.props.onClick,
-        this.props.onClick,
+        this.props[this.Toggle.onClickProp],
         this.handleClick
       );
       toggleProps.onKeyDown = createChainedFunction(
@@ -188,20 +190,21 @@ export default class DropdownBase extends React.Component {
 }
 
 DropdownBase.Toggle = DropdownToggle;
+DropdownBase.TOGGLE_REF = TOGGLE_REF;
 
 function titleRequired(props, propName, component) {
   let titles = [];
 
   if (props.children) {
     if (props.children instanceof Array) {
-      titles = props.children.filter(child => child.type === DropdownToggle);
-    } else if(props.children.type === DropdownToggle) {
+      titles = props.children.filter(child => child.type.isToggle);
+    } else if(props.children.type.isToggle) {
       titles.push(props.children);
     }
   }
 
   if (titles.length > 1) {
-    return new Error(`(title|children) ${component} - Should only use one ${component}.Toggle child component, only the first DropdownButton.Toggle will be used`);
+    return new Error(`(title|children) ${component} - Should only use one ${component}.Toggle child component, only the first ${component}.Toggle will be used`);
   }
 
   let title = titles[0];
@@ -249,7 +252,7 @@ function menuWithMenuItemSiblings(props, propName, component) {
 
     if (child.type === MenuItem) {
       items = true;
-    } else if (child.type !== DropdownToggle) {
+    } else if (!child.type.isToggle) {
       menu = true;
     }
 

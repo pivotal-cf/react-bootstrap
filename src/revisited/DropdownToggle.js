@@ -46,3 +46,7 @@ DropdownToggle.propTypes = {
   title: titleAndChildrenValidation,
   useAnchor: React.PropTypes.bool
 };
+
+DropdownToggle.isToggle = true;
+DropdownToggle.titleProp = 'title';
+DropdownToggle.onClickProp = 'onClick';
