@@ -6,7 +6,8 @@ let props = {
   Glyphicon: {glyph: 'star'},
   Modal: {onHide() {}},
   ModalTrigger: {modal: React.DOM.div(null)},
-  OverlayTrigger: {overlay: React.DOM.div(null)}
+  OverlayTrigger: {overlay: React.DOM.div(null)},
+  SplitButton: { id: 'split-button-id' }
 };
 
 function createTest(component) {

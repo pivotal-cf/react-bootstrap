@@ -37,27 +37,27 @@ const buttonsInstance = (
           <div>hello</div>
         </CustomMenu>
       </DropdownButtonRevisited>
-      <SplitButtonRevisited title='Split Title Prop' onClick={handleClick} onSelect={handleSelect} id='split-dropdown-1'>
-        <SplitButtonRevisited.Toggle title='SR-Only Title' />
+      <SplitButton title='Split Title Prop' onClick={handleClick} onSelect={handleSelect} id='split-dropdown-1'>
+        <SplitButton.Toggle title='SR-Only Title' />
         <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
         <MenuItemRevisited header>Some Header</MenuItemRevisited>
         <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
         <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
         <MenuItemRevisited divider />
         <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
-      </SplitButtonRevisited>
-      <SplitButtonRevisited onSelect={handleSelect} id='split-dropdown-1'>
-        <SplitButtonRevisited.Toggle title='SR-Only Title' />
-        <SplitButtonRevisited.Button onClick={handleClick}>
+      </SplitButton>
+      <SplitButton onSelect={handleSelect} id='split-dropdown-1'>
+        <SplitButton.Toggle title='SR-Only Title' />
+        <SplitButton.Button onClick={handleClick}>
           Split Title Prop Child
-        </SplitButtonRevisited.Button>
+        </SplitButton.Button>
         <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
         <MenuItemRevisited header>Some Header</MenuItemRevisited>
         <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
         <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
         <MenuItemRevisited divider />
         <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
-      </SplitButtonRevisited>
+      </SplitButton>
     </ButtonToolbar>
     <Navbar>
       <Nav>

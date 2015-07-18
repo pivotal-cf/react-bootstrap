@@ -160,11 +160,10 @@ const ComponentsPage = React.createClass({
                   <p>Create a dropdown button with the <code>{'<DropdownButton />'}</code> component.</p>
                   <ReactPlayground codeText={Samples.DropdownButtonBasic} />
 
-                  <h3><Anchor id='btn-dropdowns-split'>Split button dropdowns</Anchor></h3>>
                   <h3><Anchor id='btn-dropdowns-revisited'>Single button revisited</Anchor></h3>
                   <ReactPlayground codeText={Samples.DropdownButtonRevisited} />
 
-                  <h3 id='btn-dropdowns-split'>Split button dropdowns</h3>
+                  <h3><Anchor id='btn-dropdowns-split'>Split button dropdowns</Anchor></h3>
                   <p>Similarly, create split button dropdowns with the <code>{'<SplitButton />'}</code> component.</p>
                   <ReactPlayground codeText={Samples.SplitButtonBasic} />
 
