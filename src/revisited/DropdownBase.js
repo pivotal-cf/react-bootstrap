@@ -6,6 +6,8 @@ import MenuItem from './MenuItem';
 import CustomPropTypes from '../utils/CustomPropTypes';
 import createChainedFunction from '../utils/createChainedFunction';
 
+import find from 'lodash/collection/find';
+
 const TOGGLE_REF = 'toggle-btn';
 
 export default class DropdownBase extends React.Component {
@@ -21,8 +23,18 @@ export default class DropdownBase extends React.Component {
     this.handleSelect = this.handleSelect.bind(this);
     this.extractChildren = this.extractChildren.bind(this);
 
-    this.ensureMenuProps = this.ensureMenuProps.bind(this);
-    this.ensureToggleProps = this.ensureToggleProps.bind(this);
+    this.refineMenu = this.refineMenu.bind(this);
+    this.refineToggle = this.refineToggle.bind(this);
+
+    this.childExtractors = [{
+      key: 'toggle',
+      matches: child => child.type === this.Toggle,
+      refine: this.refineToggle
+    }, {
+      key: 'menu',
+      matches: child => child.type === DropdownMenu || child.type !== MenuItem,
+      refine: this.refineMenu
+    }];
 
     this.state = {
       open: false
@@ -85,29 +97,31 @@ export default class DropdownBase extends React.Component {
   }
 
   extractChildren() {
-    let children = [];
-    let menu;
-    let toggle;
     let open = this.props.open !== undefined ? this.props.open : this.state.open;
+    let children = [];
+    let set = {};
 
     React.Children.forEach(this.props.children, child => {
-      if (child.type === this.Toggle) {
-        toggle = toggle || child;
-      } else if (child.type === DropdownMenu || child.type !== MenuItem) {
-        menu = menu || child;
+      let extractor = find(this.childExtractors, x => x.matches(child));
+
+      if (extractor) {
+        set[extractor.key] = set[extractor.key] || child;
       } else {
         children.push(child);
       }
     });
 
+    this.childExtractors.forEach(extractor => {
+      set[extractor.key] = extractor.refine(set[extractor.key], children, open);
+    });
+
     return {
       open,
-      toggle: this.ensureToggleProps(toggle, open),
-      menu: this.ensureMenuProps(menu, children, open)
+      ...set
     };
   }
 
-  ensureMenuProps(menu, children, open) {
+  refineMenu(menu, children, open) {
     const menuProps = {
       ref: 'menu',
       open,
@@ -147,7 +161,7 @@ export default class DropdownBase extends React.Component {
     return menu;
   }
 
-  ensureToggleProps(toggle, open) {
+  refineToggle(toggle, children, open) {
     let toggleProps = {
       id: this.props.id,
       ref: TOGGLE_REF,
@@ -231,35 +245,39 @@ function childrenAsArray(children) {
   return [children];
 }
 
-function singleMenuValidation(props, propName, component) {
-  let children = childrenAsArray(props.children);
-  let menus = [];
+export function singleMenuValidation(...types) {
+  return function singleMenuValidator(props, propName, component) {
+    let children = childrenAsArray(props.children);
+    let menus = [];
 
-  menus = children.filter(child => child.type !== DropdownToggle && child.type !== MenuItem);
+    menus = children.filter(child => types.indexOf(child.type) === -1);
 
-  if (menus.length > 1) {
-    return new Error(`(children) ${component} - Only one menu permitted (Either DropdownMenu or a custom menu)`);
-  }
+    if (menus.length > 1) {
+      return new Error(`(children) ${component} - Only one menu permitted (Either DropdownMenu or a custom menu)`);
+    }
+  };
 }
 
-function menuWithMenuItemSiblings(props, propName, component) {
-  let children = childrenAsArray(props.children);
-  let items = false;
-  let menu = false;
+export function menuWithMenuItemSiblings(...nonMenuTypes) {
+  return function menuWithMenuItemSiblingsValidator(props, propName, component) {
+    let children = childrenAsArray(props.children);
+    let items = false;
+    let menu = false;
 
-  for (let i = 0; i < children.length; i++) {
-    let child = children[i];
+    for (let i = 0; i < children.length; i++) {
+      let child = children[i];
 
-    if (child.type === MenuItem) {
-      items = true;
-    } else if (!child.type.isToggle) {
-      menu = true;
+      if (child.type === MenuItem) {
+        items = true;
+      } else if (nonMenuTypes.indexOf(child.type) === -1) {
+        menu = true;
+      }
+
+      if (items && menu) {
+        return new Error(`(children) ${component} - MenuItems with a Menu are not allowed. MenuItems outside the Menu will be ignored.`);
+      }
     }
-
-    if (items && menu) {
-      return new Error(`(children) ${component} - MenuItems with a Menu are not allowed. MenuItems outside the Menu will be ignored.`);
-    }
-  }
+  };
 }
 
 DropdownBase.propTypes = {
@@ -274,8 +292,8 @@ DropdownBase.propTypes = {
 
   children: CustomPropTypes.all([
     titleRequired,
-    singleMenuValidation,
-    menuWithMenuItemSiblings
+    singleMenuValidation(DropdownToggle, MenuItem),
+    menuWithMenuItemSiblings(DropdownToggle)
   ]),
 
   noCaret: React.PropTypes.bool,

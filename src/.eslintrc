@@ -1,0 +1,8 @@
+{
+  "plugins": [
+    "lodash"
+  ],
+  "rules": {
+    "lodash": 0
+  }
+}

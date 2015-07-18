@@ -4,6 +4,10 @@ const handleSelect = (event, selectEvent) => {
   console.log(`SELECTED ${selectEvent.eventKey}`);
 };
 
+const handleClick = (event, selectEvent) => {
+  console.log('CICKED SplitButton');
+};
+
 class CustomMenu extends React.Component {
   render() {
     return (
@@ -33,8 +37,20 @@ const buttonsInstance = (
           <div>hello</div>
         </CustomMenu>
       </DropdownButtonRevisited>
+      <SplitButtonRevisited title='Split Title Prop' onClick={handleClick} onSelect={handleSelect} id='split-dropdown-1'>
+        <SplitButtonRevisited.Toggle title='SR-Only Title' />
+        <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
+        <MenuItemRevisited header>Some Header</MenuItemRevisited>
+        <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
+        <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
+        <MenuItemRevisited divider />
+        <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
+      </SplitButtonRevisited>
       <SplitButtonRevisited onSelect={handleSelect} id='split-dropdown-1'>
         <SplitButtonRevisited.Toggle title='SR-Only Title' />
+        <SplitButtonRevisited.Button onClick={handleClick}>
+          Split Title Prop Child
+        </SplitButtonRevisited.Button>
         <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
         <MenuItemRevisited header>Some Header</MenuItemRevisited>
         <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
