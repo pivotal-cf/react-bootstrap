@@ -2,7 +2,7 @@ import React, { cloneElement } from 'react';
 import keycode from 'keycode';
 import DropdownToggle from './DropdownToggle';
 import DropdownMenu from './DropdownMenu';
-import MenuItem from './MenuItem';
+import MenuItem from '../MenuItem';
 import CustomPropTypes from '../utils/CustomPropTypes';
 import createChainedFunction from '../utils/createChainedFunction';
 

@@ -24,12 +24,12 @@ const buttonsInstance = (
     <ButtonToolbar>
       <DropdownButtonRevisited onSelect={handleSelect} id='dropdown-1'>
         <DropdownButtonRevisited.Toggle>Custom Title</DropdownButtonRevisited.Toggle>
-        <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
-        <MenuItemRevisited header>Some Header</MenuItemRevisited>
-        <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
-        <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
-        <MenuItemRevisited divider />
-        <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
+        <MenuItem eventKey='1'>Action</MenuItem>
+        <MenuItem header>Some Header</MenuItem>
+        <MenuItem eventKey='2'>Another action</MenuItem>
+        <MenuItem eventKey='3'>Something else here</MenuItem>
+        <MenuItem divider />
+        <MenuItem eventKey='4'>Separated link</MenuItem>
       </DropdownButtonRevisited>
       <DropdownButtonRevisited id='dropdown-2'>
         <DropdownButtonRevisited.Toggle>Custom Title</DropdownButtonRevisited.Toggle>
@@ -39,24 +39,24 @@ const buttonsInstance = (
       </DropdownButtonRevisited>
       <SplitButton title='Split Title Prop' onClick={handleClick} onSelect={handleSelect} id='split-dropdown-1'>
         <SplitButton.Toggle title='SR-Only Title' />
-        <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
-        <MenuItemRevisited header>Some Header</MenuItemRevisited>
-        <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
-        <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
-        <MenuItemRevisited divider />
-        <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
+        <MenuItem eventKey='1'>Action</MenuItem>
+        <MenuItem header>Some Header</MenuItem>
+        <MenuItem eventKey='2'>Another action</MenuItem>
+        <MenuItem eventKey='3'>Something else here</MenuItem>
+        <MenuItem divider />
+        <MenuItem eventKey='4'>Separated link</MenuItem>
       </SplitButton>
       <SplitButton onSelect={handleSelect} id='split-dropdown-1'>
         <SplitButton.Toggle title='SR-Only Title' />
         <SplitButton.Button onClick={handleClick}>
           Split Title Prop Child
         </SplitButton.Button>
-        <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
-        <MenuItemRevisited header>Some Header</MenuItemRevisited>
-        <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
-        <MenuItemRevisited eventKey='3'>Something else here</MenuItemRevisited>
-        <MenuItemRevisited divider />
-        <MenuItemRevisited eventKey='4'>Separated link</MenuItemRevisited>
+        <MenuItem eventKey='1'>Action</MenuItem>
+        <MenuItem header>Some Header</MenuItem>
+        <MenuItem eventKey='2'>Another action</MenuItem>
+        <MenuItem eventKey='3'>Something else here</MenuItem>
+        <MenuItem divider />
+        <MenuItem eventKey='4'>Separated link</MenuItem>
       </SplitButton>
     </ButtonToolbar>
     <Navbar>
@@ -64,9 +64,9 @@ const buttonsInstance = (
         <NavItem>Item 1</NavItem>
         <NavDropdown id='nav-dropdown-1'>
           <NavDropdown.Toggle>Custom Title</NavDropdown.Toggle>
-          <MenuItemRevisited eventKey='1'>Action</MenuItemRevisited>
-          <MenuItemRevisited header>Some Header</MenuItemRevisited>
-          <MenuItemRevisited eventKey='2'>Another action</MenuItemRevisited>
+          <MenuItem eventKey='1'>Action</MenuItem>
+          <MenuItem header>Some Header</MenuItem>
+          <MenuItem eventKey='2'>Another action</MenuItem>
         </NavDropdown>
       </Nav>
     </Navbar>

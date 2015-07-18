@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
 import SplitButton from '../src/SplitButton';
-import MenuItem from '../src/revisited/MenuItem';
+import MenuItem from '../src/MenuItem';
 import Button from '../src/Button';
 
-describe('SplitButton revisited', function() {
+describe('SplitButton', function() {
   const simple = (
     <SplitButton title='Title' id='test-id'>
       <MenuItem>Item 1</MenuItem>

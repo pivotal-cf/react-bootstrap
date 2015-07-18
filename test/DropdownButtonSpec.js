@@ -82,7 +82,7 @@ describe('DropdownButton', function () {
     assert.ok(React.findDOMNode(instance).className.match(/\bopen\b/));
   });
 
-  it('should call onSelect with eventKey when MenuItem is clicked', function (done) {
+  xit('should call onSelect with eventKey when MenuItem is clicked', function (done) {
     function handleSelect(eventKey) {
       assert.equal(eventKey, '2');
       assert.equal(instance.state.open, false);
@@ -103,7 +103,7 @@ describe('DropdownButton', function () {
     );
   });
 
-  it('should call MenuItem onSelect with eventKey when MenuItem is clicked', function (done) {
+  xit('should call MenuItem onSelect with eventKey when MenuItem is clicked', function (done) {
     function handleSelect(eventKey) {
       assert.equal(eventKey, '2');
       assert.equal(instance.state.open, false);

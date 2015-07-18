@@ -5,7 +5,7 @@ import Button from './Button';
 import ButtonGroup from './ButtonGroup';
 import CustomPropTypes from './utils/CustomPropTypes';
 import DropdownBase, { singleMenuValidation, menuWithMenuItemSiblings } from './revisited/DropdownBase';
-import MenuItem from './revisited/MenuItem';
+import MenuItem from './MenuItem';
 import SplitToggle from './revisited/SplitToggle';
 import createChainedFunction from './utils/createChainedFunction';
 

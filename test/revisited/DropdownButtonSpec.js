@@ -2,7 +2,7 @@ import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
 import DropdownButton from '../../src/revisited/DropdownButton';
 import DropdownMenu from '../../src/revisited/DropdownMenu';
-import MenuItem from '../../src/revisited/MenuItem';
+import MenuItem from '../../src/MenuItem';
 import { shouldWarn } from '../helpers';
 import keycode from 'keycode';
 

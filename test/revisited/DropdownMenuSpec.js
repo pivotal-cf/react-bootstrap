@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
 import DropdownMenu from '../../src/revisited/DropdownMenu';
-import MenuItem from '../../src/revisited/MenuItem';
+import MenuItem from '../../src/MenuItem';
 import keycode from 'keycode';
 
 describe('DropdownMenu revisited', function() {
