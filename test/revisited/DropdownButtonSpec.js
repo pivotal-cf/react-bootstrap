@@ -125,9 +125,25 @@ describe('DropdownButton revisited', function() {
     ReactTestUtils.scryRenderedComponentsWithType(instance, CustomMenu).length.should.equal(1);
   });
 
-  it('prop validation with multiple explicit menus');
+  it('prop validation with multiple explicit menus', function() {
+    const props = {
+      title: 'herpa derpa',
+      children: [(
+        <CustomMenu>
+          <MenuItem>Item 1</MenuItem>
+        </CustomMenu>
+      ), (
+        <CustomMenu>
+          <MenuItem>Item 1</MenuItem>
+        </CustomMenu>
+      )]
+    };
 
-  it('only renders one custom menu', function() {
+    let err = DropdownButton.propTypes.children(props, 'children', 'DropdownButton');
+    err.message.should.match(/Only one.*menu permitted/);
+  });
+
+  it('only renders one menu', function() {
     const instance = ReactTestUtils.renderIntoDocument(
       <DropdownButton title='Single child' id='test-id'>
         <CustomMenu>
