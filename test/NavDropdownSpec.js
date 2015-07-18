@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
-import NavDropdown from '../../src/revisited/NavDropdown';
-import MenuItem from '../../src/MenuItem';
+import NavDropdown from '../src/NavDropdown';
+import MenuItem from '../src/MenuItem';
 
 describe('NavDropdown', function() {
   it('NavDropdown specific tests');

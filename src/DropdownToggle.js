@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import Button from '../Button';
-import CustomPropTypes from '../utils/CustomPropTypes';
-import SafeAnchor from '../SafeAnchor';
+import Button from './Button';
+import CustomPropTypes from './utils/CustomPropTypes';
+import SafeAnchor from './SafeAnchor';
 
 const CARET = <span> <span className='caret' /></span>;
 

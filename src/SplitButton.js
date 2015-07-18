@@ -4,9 +4,9 @@ import BootstrapMixin from './BootstrapMixin';
 import Button from './Button';
 import ButtonGroup from './ButtonGroup';
 import CustomPropTypes from './utils/CustomPropTypes';
-import DropdownBase, { singleMenuValidation, menuWithMenuItemSiblings } from './revisited/DropdownBase';
+import DropdownBase, { singleMenuValidation, menuWithMenuItemSiblings } from './DropdownBase';
 import MenuItem from './MenuItem';
-import SplitToggle from './revisited/SplitToggle';
+import SplitToggle from './SplitToggle';
 import createChainedFunction from './utils/createChainedFunction';
 
 class SplitButtonButton extends Button { }

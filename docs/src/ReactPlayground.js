@@ -19,7 +19,6 @@ import * as modDropdownButton from '../../src/DropdownButton';
 
 import * as modFade from '../../src/Fade';
 
-import * as modDropdownButtonRevisited from '../../src/revisited/DropdownButton';
 import * as modGlyphicon from '../../src/Glyphicon';
 import * as modGrid from '../../src/Grid';
 import * as modInput from '../../src/Input';
@@ -30,7 +29,7 @@ import * as modListGroupItem from '../../src/ListGroupItem';
 import * as modNav from '../../src/Nav';
 import * as modNavbar from '../../src/Navbar';
 import * as modNavItem from '../../src/NavItem';
-import * as modNavDropdown from '../../src/revisited/NavDropdown';
+import * as modNavDropdown from '../../src/NavDropdown';
 import * as modMenuItem from '../../src/MenuItem';
 import * as modModal from '../../src/Modal';
 import * as modOverlayTrigger from '../../src/OverlayTrigger';
@@ -87,7 +86,6 @@ const Carousel = modCarousel.default;
 const CarouselItem = modCarouselItem.default;
 const Col = modCol.default;
 const DropdownButton = modDropdownButton.default;
-const DropdownButtonRevisited = modDropdownButtonRevisited.default;
 const Glyphicon = modGlyphicon.default;
 const Grid = modGrid.default;
 const Input = modInput.default;

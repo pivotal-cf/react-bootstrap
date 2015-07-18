@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
-import DropdownToggle from '../../src/revisited/DropdownToggle';
+import DropdownToggle from '../src/DropdownToggle';
 
 describe('DropdownToggle', function() {
   const simpleToggle = <DropdownToggle open={false} title='herpa derpa' />;
