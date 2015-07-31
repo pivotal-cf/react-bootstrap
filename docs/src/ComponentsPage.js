@@ -519,15 +519,15 @@ const ComponentsPage = React.createClass({
 
                   <h3><Anchor id='tabs-uncontrolled'>Uncontrolled</Anchor></h3>
                   <p>Allow the component to control its own state.</p>
-                  <ReactPlayground codeText={Samples.TabbedAreaUncontrolled} exampleClassName='bs-example-tabs' />
+                  <ReactPlayground codeText={Samples.TabsUncontrolled} exampleClassName='bs-example-tabs' />
 
                   <h3><Anchor id='tabs-controlled'>Controlled</Anchor></h3>
                   <p>Pass down the active state on render via props.</p>
-                  <ReactPlayground codeText={Samples.TabbedAreaControlled} exampleClassName='bs-example-tabs' />
+                  <ReactPlayground codeText={Samples.TabsControlled} exampleClassName='bs-example-tabs' />
 
                   <h3><Anchor id='tabs-no-animation'>No animation</Anchor></h3>
                   <p>Set the <code>animation</code> prop to <code>false</code></p>
-                  <ReactPlayground codeText={Samples.TabbedAreaNoAnimation} exampleClassName='bs-example-tabs' />
+                  <ReactPlayground codeText={Samples.TabsNoAnimation} exampleClassName='bs-example-tabs' />
 
                   <div className='bs-callout bs-callout-info'>
                     <h4>Extends tabbed navigation</h4>

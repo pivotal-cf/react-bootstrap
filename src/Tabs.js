@@ -1,5 +1,4 @@
 import React, { cloneElement } from 'react';
-import BootstrapMixin from './BootstrapMixin';
 
 import ValidComponentChildren from './utils/ValidComponentChildren';
 import Nav from './Nav';
@@ -20,9 +19,7 @@ function getDefaultActiveKeyFromChildren(children) {
   return defaultActiveKey;
 }
 
-const TabbedArea = React.createClass({
-  mixins: [BootstrapMixin],
-
+const Tabs = React.createClass({
   propTypes: {
     activeKey: React.PropTypes.any,
     defaultActiveKey: React.PropTypes.any,
@@ -78,10 +75,13 @@ const TabbedArea = React.createClass({
   },
 
   render() {
-    let { id, ...props } = this.props;
+    let { id, className,
+      // we don't want to expose the `style` property
+      style, // eslint-disable-line react/prop-types
+      ...props } = this.props;
 
     function renderTabIfSet(child) {
-      return child.props.tab != null ? this.renderTab(child) : null;
+      return child.props.title != null ? this.renderTab(child) : null;
     }
 
     let nav = (
@@ -91,9 +91,9 @@ const TabbedArea = React.createClass({
     );
 
     return (
-      <div>
+      <div id={id} className={className} style={style}>
         {nav}
-        <div id={id} className="tab-content" ref="panes">
+        <div className="tab-content" ref="panes">
           {ValidComponentChildren.map(this.props.children, this.renderPane)}
         </div>
       </div>
@@ -126,7 +126,7 @@ const TabbedArea = React.createClass({
   },
 
   renderTab(child) {
-    let {eventKey, className, tab, disabled } = child.props;
+    let {eventKey, title, disabled } = child.props;
 
     return (
       <NavItem
@@ -134,9 +134,8 @@ const TabbedArea = React.createClass({
         ref={'tab' + eventKey}
         aria-controls={panelId(this.props, child)}
         eventKey={eventKey}
-        className={className}
         disabled={disabled}>
-        {tab}
+        {title}
       </NavItem>
     );
   },
@@ -165,4 +164,4 @@ const TabbedArea = React.createClass({
   }
 });
 
-export default TabbedArea;
+export default Tabs;

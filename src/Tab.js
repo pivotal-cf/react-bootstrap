@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import TransitionEvents from './utils/TransitionEvents';
 
-const TabPane = React.createClass({
+const Tab = React.createClass({
   propTypes: {
     active:          React.PropTypes.bool,
     animation:       React.PropTypes.bool,
@@ -89,4 +89,4 @@ const TabPane = React.createClass({
   }
 });
 
-export default TabPane;
+export default Tab;
