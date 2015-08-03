@@ -1,8 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import TransitionEvents from './utils/TransitionEvents';
+import deprecationWarning from './utils/deprecationWarning';
 
-const Tab = React.createClass({
+const TabPane = React.createClass({
   propTypes: {
     active:          React.PropTypes.bool,
     animation:       React.PropTypes.bool,
@@ -76,17 +77,18 @@ const Tab = React.createClass({
       'active': this.props.active || this.state.animateOut,
       'in': this.props.active && !this.state.animateIn
     };
+    deprecationWarning('Tab', 'TabPane');
 
     return (
       <div {...this.props}
         role='tabpanel'
         aria-hidden={!this.props.active}
         className={classNames(this.props.className, classes)}
-      >
+        >
         {this.props.children}
       </div>
     );
   }
 });
 
-export default Tab;
+export default TabPane;
