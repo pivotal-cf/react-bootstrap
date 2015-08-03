@@ -45,6 +45,7 @@ describe('MenuItem', function () {
 
     let anchor = ReactTestUtils.findRenderedDOMComponentWithTag(instance, 'a');
     assert.equal(React.findDOMNode(anchor).getAttribute('tabIndex'), '-1');
+    assert.equal(React.findDOMNode(anchor).getAttribute('role'), 'menuitem');
   });
 
   it('should fire callback on click of link', function (done) {
