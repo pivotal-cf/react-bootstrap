@@ -121,7 +121,7 @@ const Tabs = React.createClass({
       bsStyle = isHorizontal ? 'pills' : 'tabs';
     }
 
-    const containerProps = {id, className, style};
+    const containerProps = {id, className, style, onKeyUp: this.handleKeyUp};
 
     const tabsProps = {
       ...props,
@@ -189,6 +189,34 @@ const Tabs = React.createClass({
           </div>
         </div>
       );
+    }
+  },
+
+  selectPreviousTab() {
+    if (React.Children.count(this.props.children) !== 1) {
+      let tabEventKeys = this.props.children.map(child =>
+      child.props.disabled ? null : child.props.eventKey).filter(key => key);
+      let currentIndex = tabEventKeys.indexOf(this.getActiveKey());
+      let leftTabKey = tabEventKeys[(currentIndex - 1 + tabEventKeys.length) % tabEventKeys.length];
+      this.handleSelect(leftTabKey);
+    }
+  },
+  
+  selectNextTab() {
+    if (React.Children.count(this.props.children) !== 1) {
+      let tabEventKeys = this.props.children.map(child =>
+      child.props.disabled ? null : child.props.eventKey).filter(key => key);
+      let currentIndex = tabEventKeys.indexOf(this.getActiveKey());
+      let leftTabKey = tabEventKeys[(currentIndex + 1) % tabEventKeys.length];
+      this.handleSelect(leftTabKey);
+    }
+  },
+  
+  handleKeyUp(e) {
+    if (e.keyCode === 37 || e.keyCode === 38) {
+      this.selectPreviousTab();
+    } else if (e.keyCode === 39 || e.keyCode === 40) {
+      this.selectNextTab();
     }
   },
 

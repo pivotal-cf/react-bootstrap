@@ -13,8 +13,8 @@ import ValidComponentChildren from '../src/utils/ValidComponentChildren';
 
 import { render } from './helpers';
 
-describe('Tabs', function () {
-  it('Should show the correct tab', function () {
+describe('Tabs', function() {
+  it('Should show the correct tab', function() {
     let instance = ReactTestUtils.renderIntoDocument(
       <Tabs activeKey={1}>
         <Tab title="Tab 1" eventKey={1}>Tab 1 content</Tab>
@@ -32,7 +32,7 @@ describe('Tabs', function () {
     assert.equal(tabs.refs.tabs.props.activeKey, 1);
   });
 
-  it('Should only show the tabs with `Tab.props.title` set', function () {
+  it('Should only show the tabs with `Tab.props.title` set', function() {
     let instance = ReactTestUtils.renderIntoDocument(
       <Tabs activeKey={3}>
         <Tab title="Tab 1" eventKey={1}>Tab 1 content</Tab>
@@ -47,7 +47,7 @@ describe('Tabs', function () {
     assert.equal(tabs.refs.tabs.props.activeKey, 3);
   });
 
-  it('Should allow tab to have React components', function () {
+  it('Should allow tab to have React components', function() {
     let tabTitle = (
       <strong className="special-tab">Tab 2</strong>
     );
@@ -418,6 +418,29 @@ describe('Tabs', function () {
     checkTabRemovingWithAnimation(false);
   });
 
+  it('Should not pass className to Nav', function () {
+    let instance = ReactTestUtils.renderIntoDocument(
+      <Tabs bsStyle="pills" defaultActiveKey={1} animation={false}>
+        <Tab title="Tab 1" eventKey={1} className="my-tab-class">Tab 1 content</Tab>
+        <Tab title="Tab 2" eventKey={2}>Tab 2 content</Tab>
+      </Tabs>
+    );
+    let myTabClass = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'my-tab-class');
+    let myNavItem = ReactTestUtils.scryRenderedDOMComponentsWithClass(instance, 'nav-pills')[0];
+    assert.notDeepEqual(myTabClass, myNavItem);
+  });
+
+  it('Should pass className, Id, and style to Tabs', function () {
+    let instance = ReactTestUtils.renderIntoDocument(
+      <Tabs bsStyle="pills" defaultActiveKey={1} animation={false}
+                  className="my-tabs-class" id="my-tabs-id" style={{opacity: 0.5}} />
+    );
+    assert.equal(React.findDOMNode(instance).getAttribute('class'), 'my-tabs-class');
+    assert.equal(React.findDOMNode(instance).getAttribute('id'), 'my-tabs-id');
+    assert.deepEqual(React.findDOMNode(instance).getAttribute('style'), 'opacity:0.5;');
+
+  });
+
   describe('Web Accessibility', function(){
     let instance;
     beforeEach(function(){
@@ -464,28 +487,344 @@ describe('Tabs', function () {
       assert.equal(link1.props['aria-selected'], undefined);
       assert.equal(link2.props['aria-selected'], true);
     });
-  });
+  
+    describe('keyboard navigation', function() {
+      describe('left arrow key', function() {
+        it('Should focus and activate the previous tab', function() {
+          let instance = ReactTestUtils.renderIntoDocument(
+            <Tabs defaultActiveKey={'b'} id='tabs' animation={false}>
+              <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+              <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+            </Tabs>
+          );
 
-  it('Should not pass className to Nav', function () {
-    let instance = ReactTestUtils.renderIntoDocument(
-      <Tabs bsStyle="pills" defaultActiveKey={1} animation={false}>
-        <Tab title="Tab 1" eventKey={1} className="my-tab-class">Tab 1 content</Tab>
-        <Tab title="Tab 2" eventKey={2}>Tab 2 content</Tab>
-      </Tabs>
-    );
-    let myTabClass = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'my-tab-class');
-    let myNavItem = ReactTestUtils.scryRenderedDOMComponentsWithClass(instance, 'nav-pills')[0];
-    assert.notDeepEqual(myTabClass, myNavItem);
-  });
+          let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+          assert.equal(panes[0].props.active, false);
+          assert.equal(panes[1].props.active, true);
 
-  it('Should pass className, Id, and style to Tabs', function () {
-    let instance = ReactTestUtils.renderIntoDocument(
-      <Tabs bsStyle="pills" defaultActiveKey={1} animation={false}
-                  className="my-tabs-class" id="my-tabs-id" style={{opacity: 0.5}} />
-    );
-    assert.equal(React.findDOMNode(instance).getAttribute('class'), 'my-tabs-class');
-    assert.equal(React.findDOMNode(instance).getAttribute('id'), 'my-tabs-id');
-    assert.deepEqual(React.findDOMNode(instance).getAttribute('style'), 'opacity:0.5;');
+          let DOMNode = React.findDOMNode(instance);
+          ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 37}); //left arrow key code: 37
 
+          panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+          assert.equal(panes[0].props.active, true);
+          assert.equal(panes[1].props.active, false);
+        });
+
+        it('Should not focus and activate a disabled previous tab', function() {
+          let instance = ReactTestUtils.renderIntoDocument(
+            <Tabs defaultActiveKey={'b'} id='tabs' animation={false}>
+              <Tab id='pane-0' title="Tab 0" eventKey={'z'}>Tab 0 content</Tab>
+              <Tab id='pane-1' title="Tab 1" eventKey={'a'} disabled>Tab 1 content</Tab>
+              <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+            </Tabs>
+          );
+          let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+          assert.equal(panes[0].props.active, false);
+          assert.equal(panes[1].props.active, false);
+          assert.equal(panes[2].props.active, true);
+
+          let DOMNode = React.findDOMNode(instance);
+          ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 38}); //up arrow key code: 38
+
+          panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+          assert.equal(panes[0].props.active, true);
+          assert.equal(panes[1].props.active, false);
+          assert.equal(panes[2].props.active, false);
+        });
+
+        describe('when there is only one tab', function() {
+          it('Does nothing', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+              </Tabs>
+            );
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 37}); //left arrow key code: 37
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+          });
+        });
+
+        describe('when on the first tab', function() {
+          it('Should focus and activate the last tab', function (){
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+                <Tab id='pane-3' title="Tab 3" eventKey={'c'}>Tab 3 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, false);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 37}); //left arrow key code: 37
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, true);
+          })
+        });
+
+        describe('up arrow key', function() {
+          it('Should focus and activate the previous tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'b'} id='tabs' animation={false}>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, true);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 38}); //up arrow key code: 38
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+          });
+
+          it('Should not focus and activate a disabled previous tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'b'} id='tabs' animation={false}>
+                <Tab id='pane-0' title="Tab 0" eventKey={'z'}>Tab 0 content</Tab>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'} disabled>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, true);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 38}); //up arrow key code: 38
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, false);
+          });
+
+          describe('when there is only one tab', function() {
+            it('Does nothing', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                </Tabs>
+              );
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 38}); //up arrow key code: 38
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+            });
+          });
+
+          describe('when on the first tab', function() {
+            it('Should focus and activate the last tab', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                  <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+                  <Tab id='pane-3' title="Tab 3" eventKey={'c'}>Tab 3 content</Tab>
+                </Tabs>
+              );
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, false);
+
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 38}); //up arrow key code: 38
+
+              panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, false);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, true);
+            })
+          });
+        });
+
+        describe('right arrow key', function() {
+          it('Should focus and activate the next tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 39}); //right arrow key code: 39
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, true);
+          });
+
+          it('Should not focus and activate a disabled next tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'z'} id='tabs' animation={false}>
+                <Tab id='pane-0' title="Tab 0" eventKey={'z'}>Tab 0 content</Tab>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'} disabled>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, false);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 39}); //up arrow key code: 39
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, true);
+          });
+
+          describe('when there is only one tab', function() {
+            it('Does nothing', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                </Tabs>
+              );
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 39}); //right arrow key code: 39
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+            });
+          });
+
+          describe('when on the last tab', function() {
+            it('Should focus and activate the first tab', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'c'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                  <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+                  <Tab id='pane-3' title="Tab 3" eventKey={'c'}>Tab 3 content</Tab>
+                </Tabs>
+              );
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, false);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, true);
+
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 39}); //right arrow key code: 39
+
+              panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, false);
+            })
+          });
+        });
+        describe('down arrow key', function() {
+          it('Should focus and activate the next tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 40}); //right arrow key code: 40
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, true);
+          });
+
+          it('Should not focus and activate a disabled next tab', function() {
+            let instance = ReactTestUtils.renderIntoDocument(
+              <Tabs defaultActiveKey={'z'} id='tabs' animation={false}>
+                <Tab id='pane-0' title="Tab 0" eventKey={'z'}>Tab 0 content</Tab>
+                <Tab id='pane-1' title="Tab 1" eventKey={'a'} disabled>Tab 1 content</Tab>
+                <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+              </Tabs>
+            );
+
+            let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, true);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, false);
+
+            let DOMNode = React.findDOMNode(instance);
+            ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 40}); //up arrow key code: 40
+
+            panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+            assert.equal(panes[0].props.active, false);
+            assert.equal(panes[1].props.active, false);
+            assert.equal(panes[2].props.active, true);
+          });
+
+          describe('when there is only one tab', function() {
+            it('Does nothing', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'a'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                </Tabs>
+              );
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 40}); //right arrow key code: 40
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+            });
+          });
+
+          describe('when on the last tab', function() {
+            it('Should focus and activate the first tab', function() {
+              let instance = ReactTestUtils.renderIntoDocument(
+                <Tabs defaultActiveKey={'c'} id='tabs' animation={false}>
+                  <Tab id='pane-1' title="Tab 1" eventKey={'a'}>Tab 1 content</Tab>
+                  <Tab id='pane-2' title="Tab 2" eventKey={'b'}>Tab 2 content</Tab>
+                  <Tab id='pane-3' title="Tab 3" eventKey={'c'}>Tab 3 content</Tab>
+                </Tabs>
+              );
+
+              let panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, false);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, true);
+
+              let DOMNode = React.findDOMNode(instance);
+              ReactTestUtils.Simulate.keyUp(DOMNode, {keyCode: 40}); //right arrow key code: 40
+
+              panes = ReactTestUtils.scryRenderedComponentsWithType(instance, Tab);
+              assert.equal(panes[0].props.active, true);
+              assert.equal(panes[1].props.active, false);
+              assert.equal(panes[2].props.active, false);
+            })
+          });
+        });
+      });
+    });
   });
 });
