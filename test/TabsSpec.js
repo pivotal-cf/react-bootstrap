@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
 import Tabs from '../src/Tabs';
 import Tab from '../src/Tab';
+import Nav from '../src/Nav';
 import NavItem from '../src/NavItem';
 import Nav from '../src/Nav';
 import ValidComponentChildren from '../src/utils/ValidComponentChildren';
@@ -216,6 +217,67 @@ describe('Tabs', function () {
     assert.equal(panes[0].props.active, false);
     assert.equal(panes[1].props.active, true);
     assert.equal(tabs.refs.tabs.props.activeKey, 2);
+  });
+
+
+  describe('when the position prop is not provided', function() {
+    it('doesn\'t stack the tabs', function() {
+      let instance = ReactTestUtils.renderIntoDocument(
+        <Tabs defaultActiveKey={1} className="some-tabs">
+          <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+        </Tabs>
+      );
+      let nav = ReactTestUtils.findRenderedComponentWithType(instance, Nav);
+      let navList = ReactTestUtils.findRenderedDOMComponentWithTag(nav, 'ul');
+      let row = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'some-tabs');
+      let tabContent = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'tab-content');
+
+      assert.notInclude(nav.props.className, 'col-sm');
+      assert.notInclude(navList.props.className, 'nav-stacked');
+      assert.notInclude(navList.props.className, 'nav-pills');
+      assert.notInclude(row.props.className, 'row');
+      assert.notInclude(tabContent.props.className, 'col-sm');
+    });
+  });
+
+
+  describe('when the position prop is "left"', function() {
+    describe('when a navWidth is not provided', function() {
+      it('Should have a left nav with a width of 2', function() {
+        let instance = ReactTestUtils.renderIntoDocument(
+          <Tabs defaultActiveKey={1} position="left" className="some-tabs">
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+        let nav = ReactTestUtils.findRenderedComponentWithType(instance, Nav);
+        let navList = ReactTestUtils.findRenderedDOMComponentWithTag(nav, 'ul');
+        let row = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'some-tabs');
+        let tabContent = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'tab-content');
+
+        assert.equal(nav.props.className, 'col-sm-2');
+        assert.include(navList.props.className, 'nav-stacked');
+        assert.include(navList.props.className, 'nav-pills');
+        assert.equal(row.props.className, 'some-tabs row');
+        assert.equal(tabContent.props.className, 'tab-content col-sm-10');
+      });
+    });
+
+    describe('when a navWidth is provided', function() {
+      it('Should have a left nav with the width that was provided', function() {
+        let instance = ReactTestUtils.renderIntoDocument(
+          <Tabs defaultActiveKey={1} position="left" navWidth={3} className="some-tabs">
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+        let nav = ReactTestUtils.findRenderedComponentWithType(instance, Nav);
+        let row = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'some-tabs');
+        let tabContent = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'tab-content');
+
+        assert.equal(nav.props.className, 'col-sm-3');
+        assert.equal(row.props.className, 'some-tabs row');
+        assert.equal(tabContent.props.className, 'tab-content col-sm-9');
+      });
+    });
   });
 
   describe('animation', function () {
