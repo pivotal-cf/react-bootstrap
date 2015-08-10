@@ -2,6 +2,7 @@ import React, { cloneElement } from 'react';
 import ValidComponentChildren from './utils/ValidComponentChildren';
 import Nav from './Nav';
 import NavItem from './NavItem';
+import classnames from 'classnames';
 
 let panelId = (props, child) => child.props.id ? child.props.id : props.id && (props.id + '___panel___' + child.props.eventKey);
 let tabId = (props, child) => child.props.id ? child.props.id + '___tab' : props.id && (props.id + '___tab___' + child.props.eventKey);
@@ -25,13 +26,20 @@ const Tabs = React.createClass({
     bsStyle: React.PropTypes.oneOf(['tabs', 'pills']),
     animation: React.PropTypes.bool,
     id: React.PropTypes.string,
-    onSelect: React.PropTypes.func
+    onSelect: React.PropTypes.func,
+    position: React.PropTypes.oneOf(['top', 'left']),
+    /**
+     * The number of grid columns for the nav if the position is left.
+     */
+    navWidth: React.PropTypes.number
   },
 
   getDefaultProps() {
     return {
       bsStyle: 'tabs',
-      animation: true
+      animation: true,
+      navWidth: 2,
+      position: 'top'
     };
   },
 
@@ -78,22 +86,36 @@ const Tabs = React.createClass({
       id,
       className,
       style, // eslint-disable-line react/prop-types
+      position,
+      navWidth,
       ...props } = this.props;
 
     function renderTabIfSet(child) {
       return child.props.title != null ? this.renderTab(child) : null;
     }
 
+    let tabsClass = className;
+    let navWidthClass = '';
+    let tabContentWidthClass = '';
+    let navListClass = '';
+
+    if (position === 'left') {
+      tabsClass = classnames(className, 'row');
+      navListClass = 'nav-stacked nav-pills';
+      navWidthClass = 'col-sm-' + navWidth;
+      tabContentWidthClass = 'col-sm-' + (12 - navWidth);
+    }
+
     let nav = (
-      <Nav {...props} activeKey={this.getActiveKey()} onSelect={this.handleSelect} ref="tabs">
+      <Nav {...props} className={navWidthClass} ulClassName={navListClass} activeKey={this.getActiveKey()} onSelect={this.handleSelect} ref="tabs">
         {ValidComponentChildren.map(this.props.children, renderTabIfSet, this)}
       </Nav>
     );
 
     return (
-      <div id={id} className={className} style={style}>
+      <div id={id} className={tabsClass} style={style}>
         {nav}
-        <div className="tab-content" ref="panes">
+        <div className={classnames('tab-content', tabContentWidthClass)} ref="panes">
           {ValidComponentChildren.map(this.props.children, this.renderPane)}
         </div>
       </div>
