@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactTestUtils from 'react/lib/ReactTestUtils';
-import Tabs from '../src/Tabs';
-import Tab from '../src/Tab';
+
+import Grid from '../src/Grid';
 import Nav from '../src/Nav';
 import NavItem from '../src/NavItem';
+import Row from '../src/Row';
+import Tab from '../src/Tab';
+import Tabs from '../src/Tabs';
+
 import ValidComponentChildren from '../src/utils/ValidComponentChildren';
+
 import { render } from './helpers';
 
 describe('Tabs', function () {
@@ -241,40 +246,122 @@ describe('Tabs', function () {
 
 
   describe('when the position prop is "left"', function() {
-    describe('when a navWidth is not provided', function() {
+    describe('when tabWidth is not provided', function() {
       it('Should have a left nav with a width of 2', function() {
         let instance = ReactTestUtils.renderIntoDocument(
-          <Tabs defaultActiveKey={1} position="left" className="some-tabs">
+          <Tabs defaultActiveKey={1} position="left">
             <Tab title="A Tab" eventKey={1}>Tab content</Tab>
           </Tabs>
         );
         let nav = ReactTestUtils.findRenderedComponentWithType(instance, Nav);
         let navList = ReactTestUtils.findRenderedDOMComponentWithTag(nav, 'ul');
-        let row = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'some-tabs');
         let tabContent = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'tab-content');
 
-        assert.equal(nav.props.className, 'col-sm-2');
+        assert.equal(nav.props.className, 'col-xs-2');
         assert.include(navList.props.className, 'nav-stacked');
         assert.include(navList.props.className, 'nav-pills');
-        assert.equal(row.props.className, 'some-tabs row');
-        assert.equal(tabContent.props.className, 'tab-content col-sm-10');
+        assert.equal(tabContent.props.className, 'tab-content col-xs-10');
       });
     });
 
-    describe('when a navWidth is provided', function() {
+    describe('when only tabWidth is provided', function() {
       it('Should have a left nav with the width that was provided', function() {
         let instance = ReactTestUtils.renderIntoDocument(
-          <Tabs defaultActiveKey={1} position="left" navWidth={3} className="some-tabs">
+          <Tabs defaultActiveKey={1} position="left" tabWidth={3}>
             <Tab title="A Tab" eventKey={1}>Tab content</Tab>
           </Tabs>
         );
         let nav = ReactTestUtils.findRenderedComponentWithType(instance, Nav);
-        let row = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'some-tabs');
         let tabContent = ReactTestUtils.findRenderedDOMComponentWithClass(instance, 'tab-content');
 
-        assert.equal(nav.props.className, 'col-sm-3');
-        assert.equal(row.props.className, 'some-tabs row');
-        assert.equal(tabContent.props.className, 'tab-content col-sm-9');
+        assert.equal(nav.props.className, 'col-xs-3');
+        assert.equal(tabContent.props.className, 'tab-content col-xs-9');
+      });
+    });
+
+    describe('when simple tabWidth and paneWidth are provided', function() {
+      let tabs, panes;
+
+      beforeEach(function () {
+        let instance = ReactTestUtils.renderIntoDocument(
+          <Tabs position="left" tabWidth={4} paneWidth={7}>
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+
+        tabs = instance.refs.tabs;
+        panes = instance.refs.panes;
+      });
+
+      it('Should have the provided widths', function() {
+        expect(React.findDOMNode(tabs).className).to.match(/\bcol-xs-4\b/);
+        expect(React.findDOMNode(panes).className).to.match(/\bcol-xs-7\b/);
+      });
+    });
+
+    describe('when complex tabWidth and paneWidth are provided', function() {
+      let tabs, panes;
+
+      beforeEach(function () {
+        let instance = ReactTestUtils.renderIntoDocument(
+          <Tabs
+            position="left"
+            tabWidth={{xs: 4, md: 3}}
+            paneWidth={{xs: 7, md: 8}}
+          >
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+
+        tabs = instance.refs.tabs;
+        panes = instance.refs.panes;
+      });
+
+      it('Should have the provided widths', function() {
+        expect(React.findDOMNode(tabs).className)
+          .to.match(/\bcol-xs-4\b/).and.to.match(/\bcol-md-3\b/);
+        expect(React.findDOMNode(panes).className)
+          .to.match(/\bcol-xs-7\b/).and.to.match(/\bcol-md-8\b/);
+      });
+    });
+
+    describe('standalone = true (default)', function() {
+      let grids, rows;
+
+      beforeEach(function () {
+        const instance = ReactTestUtils.renderIntoDocument(
+          <Tabs position="left">
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+
+        grids = ReactTestUtils.scryRenderedComponentsWithType(instance, Grid);
+        rows = ReactTestUtils.scryRenderedComponentsWithType(instance, Row);
+      });
+
+      it('Should render a Grid and a Row', function() {
+        expect(grids).to.have.length(1);
+        expect(rows).to.have.length(1);
+      });
+    });
+
+    describe('standalone = false', function() {
+      let grids, rows;
+
+      beforeEach(function () {
+        const instance = ReactTestUtils.renderIntoDocument(
+          <Tabs position="left" standalone={false}>
+            <Tab title="A Tab" eventKey={1}>Tab content</Tab>
+          </Tabs>
+        );
+
+        grids = ReactTestUtils.scryRenderedComponentsWithType(instance, Grid);
+        rows = ReactTestUtils.scryRenderedComponentsWithType(instance, Row);
+      });
+
+      it('Should not render a Grid or a Row', function() {
+        expect(grids).to.be.empty;
+        expect(rows).to.be.empty;
       });
     });
   });

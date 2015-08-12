@@ -1,10 +1,15 @@
 import React, { cloneElement } from 'react';
-import ValidComponentChildren from './utils/ValidComponentChildren';
+
+import Col from './Col';
+import Grid from './Grid';
 import Nav from './Nav';
 import NavItem from './NavItem';
-import classnames from 'classnames';
+import Row from './Row';
+import styleMaps from './styleMaps';
 
-let panelId = (props, child) => child.props.id ? child.props.id : props.id && (props.id + '___panel___' + child.props.eventKey);
+import ValidComponentChildren from './utils/ValidComponentChildren';
+
+let paneId = (props, child) => child.props.id ? child.props.id : props.id && (props.id + '___pane___' + child.props.eventKey);
 let tabId = (props, child) => child.props.id ? child.props.id + '___tab' : props.id && (props.id + '___tab___' + child.props.eventKey);
 
 function getDefaultActiveKeyFromChildren(children) {
@@ -23,23 +28,51 @@ const Tabs = React.createClass({
   propTypes: {
     activeKey: React.PropTypes.any,
     defaultActiveKey: React.PropTypes.any,
+    /**
+     * Navigation style for tabs
+     *
+     * If not specified, it will be treated as `'tabs'` when vertically
+     * positioned and `'pills'` when horizontally positioned.
+     */
     bsStyle: React.PropTypes.oneOf(['tabs', 'pills']),
     animation: React.PropTypes.bool,
     id: React.PropTypes.string,
     onSelect: React.PropTypes.func,
-    position: React.PropTypes.oneOf(['top', 'left']),
+    position: React.PropTypes.oneOf(['top', 'left', 'right']),
     /**
-     * The number of grid columns for the nav if the position is left.
+     * Number of grid columns for the tabs if horizontally positioned
+     *
+     * This accepts either a single width or a mapping of size to width.
      */
-    navWidth: React.PropTypes.number
+    tabWidth: React.PropTypes.oneOfType([
+      React.PropTypes.number,
+      React.PropTypes.object
+    ]),
+    /**
+     * Number of grid columns for the panes if horizontally positioned
+     *
+     * This accepts either a single width or a mapping of size to width. If not
+     * specified, it will be treated as `styleMaps.GRID_COLUMNS` minus
+     * `tabWidth`.
+     */
+    paneWidth: React.PropTypes.oneOfType([
+      React.PropTypes.number,
+      React.PropTypes.object
+    ]),
+    /**
+     * Wrap tabs in `Grid` and `Row` if horizontally positioned
+     *
+     * Set this to false if embedding the tabs in an existing grid row.
+     */
+    standalone: React.PropTypes.bool
   },
 
   getDefaultProps() {
     return {
-      bsStyle: 'tabs',
       animation: true,
-      navWidth: 2,
-      position: 'top'
+      tabWidth: 2,
+      position: 'top',
+      standalone: true
     };
   },
 
@@ -87,39 +120,89 @@ const Tabs = React.createClass({
       className,
       style, // eslint-disable-line react/prop-types
       position,
-      navWidth,
-      ...props } = this.props;
+      bsStyle,
+      tabWidth,
+      paneWidth,
+      children,
+      ...props
+    } = this.props;
 
-    function renderTabIfSet(child) {
-      return child.props.title != null ? this.renderTab(child) : null;
+    const isHorizontal = position === 'left' || position === 'right';
+
+    if (bsStyle == null) {
+      bsStyle = isHorizontal ? 'pills' : 'tabs';
     }
 
-    let tabsClass = className;
-    let navWidthClass = '';
-    let tabContentWidthClass = '';
-    let navListClass = '';
+    const containerProps = {id, className, style};
 
-    if (position === 'left') {
-      tabsClass = classnames(className, 'row');
-      navListClass = 'nav-stacked nav-pills';
-      navWidthClass = 'col-sm-' + navWidth;
-      tabContentWidthClass = 'col-sm-' + (12 - navWidth);
-    }
+    const tabsProps = {
+      ...props,
+      bsStyle,
+      stacked: isHorizontal,
+      activeKey: this.getActiveKey(),
+      onSelect: this.handleSelect,
+      ref: 'tabs'
+    };
+    const childTabs = ValidComponentChildren.map(children, this.renderTab);
 
-    let nav = (
-      <Nav {...props} className={navWidthClass} ulClassName={navListClass} activeKey={this.getActiveKey()} onSelect={this.handleSelect} ref="tabs">
-        {ValidComponentChildren.map(this.props.children, renderTabIfSet, this)}
-      </Nav>
-    );
+    const panesProps = {
+      className: 'tab-content',
+      ref: 'panes'
+    };
+    const childPanes = ValidComponentChildren.map(children, this.renderPane);
 
-    return (
-      <div id={id} className={tabsClass} style={style}>
-        {nav}
-        <div className={classnames('tab-content', tabContentWidthClass)} ref="panes">
-          {ValidComponentChildren.map(this.props.children, this.renderPane)}
+    if (isHorizontal) {
+      const {tabsColProps, panesColProps} =
+        this.getColProps({tabWidth, paneWidth});
+
+      const tabs = (
+        <Col componentClass={Nav} {...tabsProps} {...tabsColProps}>
+          {childTabs}
+        </Col>
+      );
+      const panes = (
+        <Col {...panesProps} {...panesColProps}>
+          {childPanes}
+        </Col>
+      );
+
+      let body;
+      if (position === 'left') {
+        body = (
+          <div {...containerProps}>
+            {tabs}
+            {panes}
+          </div>
+        );
+      } else {
+        body = (
+          <div {...containerProps}>
+            {panes}
+            {tabs}
+          </div>
+        );
+      }
+
+      if (this.props.standalone) {
+        return (
+          <Grid><Row>{body}</Row></Grid>
+        );
+      } else {
+        return body;
+      }
+    } else {
+      return (
+        <div {...containerProps}>
+          <Nav {...tabsProps}>
+            {childTabs}
+          </Nav>
+
+          <div {...panesProps}>
+            {childPanes}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   },
 
   getActiveKey() {
@@ -138,7 +221,7 @@ const Tabs = React.createClass({
         child,
         {
           active: shouldPaneBeSetActive && (thereIsNoActivePane || !this.props.animation),
-          id: panelId(this.props, child),
+          id: paneId(this.props, child),
           'aria-labelledby': tabId(this.props, child),
           key: child.key ? child.key : index,
           animation: this.props.animation,
@@ -148,18 +231,45 @@ const Tabs = React.createClass({
   },
 
   renderTab(child) {
-    let {eventKey, title, disabled } = child.props;
+    if (child.props.title == null) {
+      return null;
+    }
+
+    let {eventKey, title, disabled} = child.props;
 
     return (
       <NavItem
         linkId={tabId(this.props, child)}
         ref={'tab' + eventKey}
-        aria-controls={panelId(this.props, child)}
+        aria-controls={paneId(this.props, child)}
         eventKey={eventKey}
         disabled={disabled}>
         {title}
       </NavItem>
     );
+  },
+
+  getColProps({tabWidth, paneWidth}) {
+    let tabsColProps;
+    if (tabWidth instanceof Object) {
+      tabsColProps = tabWidth;
+    } else {
+      tabsColProps = {xs: tabWidth};
+    }
+
+    let panesColProps;
+    if (paneWidth == null) {
+      panesColProps = {};
+      Object.keys(tabsColProps).forEach(function (size) {
+        panesColProps[size] = styleMaps.GRID_COLUMNS - tabsColProps[size];
+      });
+    } else if (paneWidth instanceof Object) {
+      panesColProps = paneWidth;
+    } else {
+      panesColProps = {xs: paneWidth};
+    }
+
+    return {tabsColProps, panesColProps};
   },
 
   shouldComponentUpdate() {
