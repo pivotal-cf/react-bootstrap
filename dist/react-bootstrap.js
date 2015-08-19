@@ -11322,8 +11322,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  handleKeyUp: function handleKeyUp(e) {
 	    if (e.keyCode === 37 || e.keyCode === 38) {
 	      this.selectPreviousTab();
+	      e.preventDefault();
 	    } else if (e.keyCode === 39 || e.keyCode === 40) {
 	      this.selectNextTab();
+	      e.preventDefault();
 	    }
 	  },
 
