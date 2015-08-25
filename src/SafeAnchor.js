@@ -19,12 +19,19 @@ export default class SafeAnchor extends React.Component {
     }
   }
 
+  handleKeyDown(event) {
+    if (event.key === ' ' || event.key === 'Enter') {
+      this.props.onClick && this.props.onClick(event) || this.handleClick(event);
+    }
+  }
+
   render() {
     return (
       <a role={this.props.href ? undefined : 'button'}
         {...this.props}
-        onClick={createChainedFunction(this.props.onClick, this.handleClick)}
-        href={this.props.href || ''}/>
+         onClick={createChainedFunction(this.props.onClick, this.handleClick)}
+         onKeyDown={this.handleKeyDown}
+         href={this.props.href || ''}/>
     );
   }
 }
